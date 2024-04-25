@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { Adapt, Button, Dialog, Sheet, XStack } from 'tamagui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { UserContext } from '@/contexts/UserContext';
 
 export default function DeletePostDialog({ postId }: { postId: string }) {
@@ -12,6 +13,8 @@ export default function DeletePostDialog({ postId }: { postId: string }) {
   const { token, user_data, user } = useContext(UserContext);
   const queryClient = useQueryClient();
 
+  const { token, user_data, user } = useContext(UserContext);
+  const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async () => {
       const response = await axios.delete(
