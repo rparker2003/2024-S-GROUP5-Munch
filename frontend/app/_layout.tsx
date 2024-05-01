@@ -106,7 +106,7 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const theme = useTheme();
   const { setUserProperties } = useContext(UserContext);
-  const { getToken, isLoaded, isSignedIn } = useAuth();
+  const { getToken, isLoaded, isSignedIn, signOut } = useAuth();
   const { user } = useUser();
 
   //routes
@@ -167,15 +167,7 @@ function RootLayoutNav() {
       return res;
     },
   });
-  /*
-  const { signOut } = useAuth();
-  const { isLoading } = useQuery({
-    queryKey: ['userData', user],
-    queryFn: async () => {
-      signOut();
-    },
-  });
-*/
+
   useEffect(() => {
     (async () => {
       if (!isLoaded) return;

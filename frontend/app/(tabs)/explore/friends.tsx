@@ -5,7 +5,7 @@ import { Byte, Recipe } from '@/types/post';
 import { useQueries } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useCallback, useContext } from 'react';
-import { FlatList, SafeAreaView } from 'react-native';
+import { FlatList, RefreshControl, SafeAreaView } from 'react-native';
 
 const Friends = () => {
   const { token, user_data } = useContext(UserContext);

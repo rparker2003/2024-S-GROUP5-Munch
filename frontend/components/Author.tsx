@@ -58,7 +58,7 @@ const Author: FC<AuthorProps> = ({
       ).data,
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['userData', user_id, 'explore'],
+        queryKey: ['userData', user_id, 'explore', user],
       });
       setIsFollowing(!isFollowing);
     },

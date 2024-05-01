@@ -4,14 +4,14 @@ import { Byte, Recipe } from '@/types/post';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useCallback, useContext } from 'react';
-import { FlatList } from 'react-native-gesture-handler';
+import { RefreshControl, FlatList } from 'react-native';
 import { Text, View } from 'tamagui';
 
 const Explore = () => {
   const { token, user_id } = useContext(UserContext);
 
-  const { isLoading, data } = useQuery({
-    queryKey: ['explore'],
+  const { isLoading, data, refetch, isRefetching } = useQuery({
+    queryKey: ['explore', 'key'],
     queryFn: async () =>
       (
         await axios.get<Byte[] | Recipe[]>(
@@ -34,6 +34,9 @@ const Explore = () => {
             showsVerticalScrollIndicator={false}
             decelerationRate={'fast'}
             initialNumToRender={5}
+            refreshControl={
+              <RefreshControl onRefresh={refetch} refreshing={isRefetching} />
+            }
           />
         ) : (
           <Text mt={'$6'}> No new posts to show...</Text>

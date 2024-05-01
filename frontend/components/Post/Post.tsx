@@ -12,7 +12,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
-import { Button, Image, Text, XStack, YStack } from 'tamagui';
+import { Button, Image, Text, View, XStack, YStack } from 'tamagui';
 import ButtonIcon from './ButtonIcon';
 import DeletePostDialog from './DeletePostDialog';
 import { EditPostDialog } from './EditPostDialog';
@@ -21,6 +21,13 @@ import { UserContext } from '@/contexts/UserContext';
 import { useAuth } from '@clerk/clerk-expo';
 import axios from 'axios';
 import { AntDesign } from '@expo/vector-icons';
+import Animated, {
+  Extrapolation,
+  SharedValue,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 interface PostProps {
   post: Byte | Recipe;
@@ -52,8 +59,9 @@ const Post: FC<PostProps> = ({ post }) => {
 
   // Used to query and mutate
   const queryClient = useQueryClient();
-  const { user_data } = useContext(UserContext);
+  const { user_data, user } = useContext(UserContext);
 
+  const progressValue = useSharedValue(0);
   const { getToken, userId } = useAuth();
   const postId = key.split('/')[1];
   // Like button state
@@ -69,6 +77,7 @@ const Post: FC<PostProps> = ({ post }) => {
 
   // Like/Unlike a post
   const { mutateAsync: changeLikes, error } = useMutation({
+    mutationKey: [postId, user_data],
     mutationFn: async () => {
       // Determine whether to like or unlike the post
       const likeAction = liked ? 'like' : 'unlike';
@@ -85,7 +94,9 @@ const Post: FC<PostProps> = ({ post }) => {
     },
     // Update the like count
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: [author] });
+      await queryClient.invalidateQueries({
+        queryKey: [user, postId, user_data, 'key'],
+      });
     },
     // Show error message in console
     onError: () => {
@@ -112,10 +123,16 @@ const Post: FC<PostProps> = ({ post }) => {
       parallaxScrollingOffset: 50,
     },
   } as const;
+
   return (
     <SafeAreaView>
       <Carousel
         {...carouselConfig}
+        loop
+        pagingEnabled={true}
+        onProgressChange={(_, absoluteProgress) => {
+          progressValue.value = absoluteProgress;
+        }}
         data={pictures}
         renderItem={({ item }) => (
           <Image
@@ -125,6 +142,17 @@ const Post: FC<PostProps> = ({ post }) => {
           />
         )}
       />
+      {pictures.map((_, index) => {
+        return (
+          <PaginationItem
+            backgroundColor='#26292E'
+            animValue={progressValue}
+            index={index}
+            key={index}
+            length={pictures.length}
+          />
+        );
+      })}
       <YStack display='flex' rowGap={'$1'} marginBottom={'$10'}>
         {userId === author.split('/')[1] && (
           <XStack display='flex' justifyContent='space-around'>
@@ -199,6 +227,67 @@ const Post: FC<PostProps> = ({ post }) => {
         </YStack>
       </YStack>
     </SafeAreaView>
+  );
+};
+
+const PaginationItem: React.FC<{
+  index: number;
+  backgroundColor: string;
+  length: number;
+  animValue: SharedValue<number>;
+  isRotate?: boolean;
+}> = (props) => {
+  const { animValue, index, length, backgroundColor, isRotate } = props;
+  const width = 10;
+
+  const animStyle = useAnimatedStyle(() => {
+    let inputRange = [index - 1, index, index + 1];
+    let outputRange = [-width, 0, width];
+
+    if (index === 0 && animValue?.value > length - 1) {
+      inputRange = [length - 1, length, length + 1];
+      outputRange = [-width, 0, width];
+    }
+
+    return {
+      transform: [
+        {
+          translateX: interpolate(
+            animValue?.value,
+            inputRange,
+            outputRange,
+            Extrapolation.CLAMP,
+          ),
+        },
+      ],
+    };
+  }, [animValue, index, length]);
+  return (
+    <View
+      style={{
+        backgroundColor: 'white',
+        width,
+        height: width,
+        borderRadius: 50,
+        overflow: 'hidden',
+        transform: [
+          {
+            rotateZ: isRotate ? '90deg' : '0deg',
+          },
+        ],
+      }}
+    >
+      <Animated.View
+        style={[
+          {
+            borderRadius: 50,
+            backgroundColor,
+            flex: 1,
+          },
+          animStyle,
+        ]}
+      />
+    </View>
   );
 };
 export default Post;

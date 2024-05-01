@@ -15,7 +15,16 @@ import { useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
-import { Button, Form, Separator, Text, View, XStack, YStack } from 'tamagui';
+import {
+  Button,
+  Form,
+  Image,
+  Separator,
+  Text,
+  View,
+  XStack,
+  YStack,
+} from 'tamagui';
 
 const Register = () => {
   const {

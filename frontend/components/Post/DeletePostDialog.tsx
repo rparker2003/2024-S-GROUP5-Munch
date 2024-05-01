@@ -12,9 +12,6 @@ export default function DeletePostDialog({ postId }: { postId: string }) {
   LogBox.ignoreLogs(['??']);
   const { token, user_data, user } = useContext(UserContext);
   const queryClient = useQueryClient();
-
-  const { token, user_data, user } = useContext(UserContext);
-  const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async () => {
       const response = await axios.delete(

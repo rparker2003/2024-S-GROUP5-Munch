@@ -14,7 +14,7 @@ import React, { useCallback, useEffect } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { Button, Form, Separator, Text, XStack, YStack } from 'tamagui';
+import { Button, Form, Image, Separator, Text, XStack, YStack } from 'tamagui';
 
 enum Strategies {
   Google = 'oauth-google',
@@ -92,14 +92,14 @@ const Login = () => {
     <View>
       <YStack gap={'$2'} paddingTop={'$5'} marginHorizontal={15}>
         <Image
-          style={{ width: 400, height: 200 }}
+          style={{ width: 350, height: 150 }}
           resizeMode='contain'
           source={{
             uri: 'https://drive.google.com/thumbnail?id=1iKHSAfc3ll-ACyneu2fVnKeZAxb8hBNy',
           }}
         />
         <Image
-          style={{ width: 400, height: 100 }}
+          style={{ width: 350, height: 50 }}
           resizeMode='contain'
           source={{
             uri: 'https://drive.google.com/thumbnail?id=15h-LZk8-ng-VGI6ex5pkgFJaByvrEr8J',

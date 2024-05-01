@@ -13,13 +13,13 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { getCurrentPositionAsync } from 'expo-location';
 import { useCallback, useContext } from 'react';
-import { FlatList, SafeAreaView } from 'react-native';
+import { FlatList, RefreshControl, SafeAreaView } from 'react-native';
 
 export default function Index() {
   const { token } = useContext(UserContext);
 
   //current route is wrong should use yelp api
-  const { isLoading, data } = useQuery({
+  const { isLoading, data, refetch, isRefetching } = useQuery({
     queryKey: ['recommendation'],
     queryFn: async () => {
       const {
@@ -48,13 +48,19 @@ export default function Index() {
 
   return (
     <SafeAreaView>
-      {!isLoading && (
+      {!isLoading && !isRefetching && (
         <FlatList
           data={data}
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
           decelerationRate={'fast'}
           initialNumToRender={5}
+          refreshControl={
+            <RefreshControl
+              refreshing={isLoading}
+              onRefresh={refetch}
+            ></RefreshControl>
+          }
         />
       )}
     </SafeAreaView>
